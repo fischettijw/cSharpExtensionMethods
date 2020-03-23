@@ -24,14 +24,10 @@ namespace cSharpExtensionMethods
 
         private void BtnExtensions_Click(object sender, EventArgs e)
         {
-            //TxtTitleCase.Text = TxtTitleCaseInput.Text.ToTitleCase();
-            TxtTitleCase.Text = "hello".AppendRandomString(5, true);
-            //TxtTitleCase.Text = TxtTitleCaseInput.Text.RandomString(10, false);
+
+            TxtTitleCase.Text = TxtTitleCaseInput.Text.AppendRandomString(15, ExtensionMethods.Case.Mixed);
             //MessageBox.Show("joe".IsBool().ToString());
         }
-
-
-
     }
 
     public static class ExtensionMethods
@@ -61,7 +57,7 @@ namespace cSharpExtensionMethods
             Lower,
             Mixed
         }
-        public static string AppendRandomString(this string str, int size, bool lowerCase)
+        public static string AppendRandomString(this string str, int size, Case whatCase)
         {
             StringBuilder builder = new StringBuilder();
             Random random = new Random();
@@ -69,10 +65,30 @@ namespace cSharpExtensionMethods
             for (int i = 0; i < size; i++)
             {
                 ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
+
+                if (whatCase == Case.Mixed)
+                {
+                    if (random.NextDouble() < 0.5)
+                    {
+                        ch = Convert.ToChar(Convert.ToString(ch).ToLower());
+                    }
+                    else
+                    {
+                        ch = Convert.ToChar(Convert.ToString(ch).ToUpper());
+                    }
+                }
+
                 builder.Append(ch);
             }
-            if (lowerCase)
-                return str + builder.ToString().ToLower();
+            switch (whatCase)
+            {
+                case Case.Lower:
+                    return str + builder.ToString().ToLower();
+                case Case.Upper:
+                    return str + builder.ToString().ToUpper();
+                case Case.Mixed:
+                    return str + builder.ToString();
+            }
             return str + builder.ToString();
         }
 
